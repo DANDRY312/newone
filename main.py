@@ -5,15 +5,22 @@ from PyQt5.QtGui import QPainter, QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QInputDialog
 
 
-class MyWidget(QMainWindow):
+class Uiclass(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('pqtb.ui', self)
+        self.pushButton = QPushButton('button', self)
+
+
+class MyWidget(Uiclass):
+    def __init__(self):
+        super().__init__()
         self.initUI()
 
     def initUI(self):
         self.h, self.w = 500, 500
+        self.setFixedSize(self.h, self.w)
         self.do_paint = False
+        self.pushButton.move(self.h // 2, self.w - 50)
         self.pushButton.clicked.connect(self.paint)
 
     def paintEvent(self, event):
