@@ -1,45 +1,23 @@
 import sys
-import random
+import sqlite3
 from PyQt5 import uic
-from PyQt5.QtGui import QPainter, QColor
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QInputDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
 
 
-class Uiclass(QMainWindow):
+class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.pushButton = QPushButton('button', self)
-
-
-class MyWidget(Uiclass):
-    def __init__(self):
-        super().__init__()
+        uic.loadUi('oaw.ui', self)
         self.initUI()
 
     def initUI(self):
-        self.h, self.w = 500, 500
-        self.setFixedSize(self.h, self.w)
-        self.do_paint = False
-        self.pushButton.move(self.h // 2, self.w - 50)
-        self.pushButton.clicked.connect(self.paint)
-
-    def paintEvent(self, event):
-        if self.do_paint:
-            qp = QPainter()
-            qp.begin(self)
-            self.draw_cir(qp)
-            qp.end()
-            self.do_paint = False
-
-    def paint(self):
-        self.do_paint = True
-        self.repaint()
-
-    def draw_cir(self, qp):
-        qp.setBrush(QColor("yellow"))
-        x1, y1, x2, y2 = random.choice(range(0, self.h + 1)), random.choice(range(0, self.w + 1)), \
-                         random.choice(range(0, self.h + 1)), random.choice(range(0, self.w + 1))
-        qp.drawEllipse(x1, y1, x2, y2)
+        self.con = sqlite3.connect("mydatabase.db")
+        cur = self.con.cursor()
+        result = cur.execute("SELECT * FROM coffee").fetchall()
+        self.tableWidget.setRowCount(len(result))
+        for i, elem in enumerate(result):
+            for j, val in enumerate(elem):
+                self.tableWidget.setItem(i, j, QTableWidgetItem(str(val)))
 
 
 def except_hook(cls, exception, traceback):
